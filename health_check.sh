@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "DevOps pipeline test"
 echo "===== Server Health Report ====="
 
 echo ""
