@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main ]
 
+  schedule:
+    - cron: "*/5 * * * *"
+
+  workflow_dispatch:
+
 jobs:
   run-on-ec2:
     runs-on: ubuntu-latest
@@ -23,8 +28,10 @@ jobs:
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
             git config --global --add safe.directory /home/ec2-user/server-health-monitor &&
-            cd server-health-monitor &&
+            cd /home/ec2-user/server-health-monitor &&
             git pull &&
             chmod +x health_check.sh &&
-            ./health_check.sh
+            mkdir -p logs &&
+            echo "----- $(date) -----" >> logs/output.log &&
+            ./health_check.sh >> logs/output.log 2>&1
           '
