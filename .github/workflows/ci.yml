@@ -1,0 +1,37 @@
+name: Server Health CI
+
+on:
+  push:
+    branches: [ main ]
+
+ # schedule:
+  #  - cron: "*/5 * * * *"
+
+  workflow_dispatch:
+
+jobs:
+  run-on-ec2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Run Script on EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} '
+            git config --global --add safe.directory /home/ec2-user/server-health-monitor &&
+            cd /home/ec2-user/server-health-monitor &&
+            git pull &&
+            chmod +x health_check.sh &&
+            mkdir -p logs &&
+            echo "----- $(date) -----" >> logs/output.log &&
+            ./health_check.sh >> logs/output.log 2>&1
+          '
