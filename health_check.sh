@@ -2,7 +2,7 @@
 
 CPU_USAGE=$(top -bn1 | grep "Cpu(s)" | awk '{print 100 - $8}')
 CPU_INT=${CPU_USAGE%.*}
-THRESHOLD=2
+THRESHOLD=50
 
 ALERT_FILE="logs/alert_sent"
 TOPIC_ARN="arn:aws:sns:us-east-1:964242332531:cpu-alert-topic"
