@@ -1,70 +1,136 @@
-# Server Health Monitoring Automation with CI/CD
+# 🚀 Server Health Monitoring System (DevOps Project)
 
-This project demonstrates a basic DevOps workflow by automating a server health monitoring script using GitHub Actions.
+This project demonstrates a **CI/CD-driven server monitoring and alerting system** built using GitHub Actions and AWS services.
 
-## Project Overview
+It automatically monitors CPU utilization on an EC2 instance and sends alerts when a defined threshold is exceeded.
 
-The project includes a Bash script that checks the health of a Linux server by monitoring:
+---
 
-- Disk usage
-- Memory usage
-- CPU usage
-- Running processes
+## 📌 Features
 
-The script is integrated with a CI pipeline using GitHub Actions, which automatically runs the script whenever code is pushed to the repository.
+* ⏱️ Automated execution using GitHub Actions (cron-based scheduling)
+* 🔐 Secure SSH connection to EC2 instance
+* 📊 Real-time CPU monitoring using Bash
+* 🚨 Alerting using AWS SNS (email notifications)
+* 🧠 Smart cooldown logic to prevent alert flooding
+* 📝 Logging for every execution cycle
+* 🌐 Includes server metadata (hostname, IP, timestamp) in alerts
 
-## Tech Stack
+---
 
-- AWS EC2 (RHEL)
-- Git
-- GitHub
-- GitHub Actions
-- Bash scripting
+## 🏗️ Architecture
 
-## CI/CD Workflow
+GitHub Actions (Scheduler)
+↓
+SSH into EC2
+↓
+Execute Bash Script
+↓
+Check CPU Utilization
+↓
+AWS SNS → Email Alert 🚨
 
-1. Code is pushed to the GitHub repository
-2. GitHub Actions workflow is triggered
-3. A GitHub runner (Ubuntu) starts automatically
-4. The repository is cloned
-5. The health_check.sh script is executed
-6. Output logs are generated in the GitHub Actions pipeline
+---
 
-## Project Structure
-server-health-monitor
-│
-├── health_check.sh
-└── .github
-└── workflows
-└── ci.yml
+## 🧰 Tech Stack
 
+* GitHub Actions (CI/CD)
+* AWS EC2
+* AWS SNS (Simple Notification Service)
+* Bash Scripting
+* Linux
 
-## Script Output Example
-===== Server Health Report =====
+---
 
-Disk Usage
-Memory Usage
-CPU Usage
-Top Processes
+## ⚙️ How It Works
 
-## How to Run the Script
+1. GitHub Actions triggers the workflow every 5 minutes.
+2. It connects to the EC2 instance via SSH.
+3. The script (`health_check.sh`) runs on EC2.
+4. CPU usage is calculated.
+5. If CPU exceeds threshold:
 
-Clone the repository:
-git clone https://github.com/prateek-11/server-health-monitor.git
+   * Alert is sent via AWS SNS
+   * Cooldown logic prevents repeated alerts
+6. Logs are stored locally on the server.
 
-Navigate to the project folder:
-cd server-health-monitor
+---
 
-Make the script executable:
-chmod +x health_check.sh
+## 📂 Project Structure
 
-Run the script:
-./health_check.sh
+```
+.
+├── .github/workflows/ci.yml   # GitHub Actions workflow
+├── health_check.sh            # Monitoring script
+├── README.md
+```
 
+---
 
-## What I Learned
+## 🔔 Sample Alert
 
-- Git version control and repository management
-- Creating CI/CD pipelines using GitHub Actions
-- Automating tasks with Bash scripting
-- Integrating Linux scripts with DevOps workflows
+```
+🚨 High CPU Alert
+
+Server: ip-172-31-10-45
+IP: 172.31.10.45
+CPU Usage: 78%
+Time: Tue Apr 21 21:10:00 IST 2026
+```
+
+---
+
+## 🧠 Cooldown Logic
+
+To prevent alert spam:
+
+* Alerts are sent only once during a high CPU spike
+* A cooldown timer ensures alerts are not repeatedly triggered
+* Alerts resume if CPU remains high after cooldown period
+
+---
+
+## 🔐 Security
+
+* Uses IAM Role attached to EC2 (no hardcoded credentials)
+* SSH authentication via GitHub Secrets
+* Principle of least privilege can be applied for SNS access
+
+---
+
+## 🚀 Future Enhancements
+
+* 📈 Monitor additional metrics (Memory, Disk, Load)
+* 📦 Dockerize the monitoring script
+* 💬 Integrate Slack/Teams alerts
+* 📊 Add dashboard (Prometheus + Grafana)
+* ⏲️ Dynamic threshold configuration
+
+---
+
+## 📎 GitHub Actions Workflow
+
+The workflow uses:
+
+* `schedule` trigger (cron)
+* SSH execution on EC2
+* Automated script execution
+
+---
+
+## 🎯 Key Learnings
+
+* Implemented CI/CD as a scheduler instead of traditional cron
+* Integrated AWS services for real-time alerting
+* Designed alert cooldown mechanism to avoid noise
+* Managed IAM roles for secure service communication
+
+---
+
+## 👨‍💻 Author
+
+Prateek Sahu
+
+---
+
+## ⭐ If you like this project, feel free to star the repo!
